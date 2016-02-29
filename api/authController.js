@@ -12,7 +12,12 @@ exports.index = function( req, res ) {
     }, function( err, user ) {
 
         if ( err ) {
-            throw err;
+            //throw err;
+			console.log(err);
+			return res.status( 500 ).json( {
+                success: false,
+                message: 'Error in accessing database. Report the problem'
+            } );
         }
 
         if ( !user ) {
@@ -24,7 +29,12 @@ exports.index = function( req, res ) {
         else if ( user ) {
             user.comparePassword( req.body.password, function( err, isMatch ) {
                 if ( err ) {
-                    throw err;
+                    //throw err;
+					console.log(err);
+					return res.status( 500 ).json( {
+						success: false,
+						message: 'Error in accessing database. Report the problem'
+					} );
                 }
 
                 if(!isMatch) {
@@ -36,16 +46,44 @@ exports.index = function( req, res ) {
 
                 // if user is found and password is right
                 // create a token
-                var token = jwt.sign( user, config.secret, {
+                var token = jwt.sign( user.toObject(), config.secret, {
                     expiresIn: 1440 // expires in 24 hours
                 } );
 
+				//get the user detail to a plain object
+				var userDetail = user.toObject();
+				
                 // return the information including token as JSON
-                res.render( 'transactions', {
-                    token: token,
-                    title: 'Transactions Page'
-                } );
-
+				var cardDetailDisplay;
+				if (userDetail.customerId) {
+					cardDetailDisplay = "style=display:none";
+				}
+				else {
+					cardDetailDisplay = "style=display:block";
+				}
+				res.render( 'transactions', {
+							token: token,
+							cardDetailDisplay: cardDetailDisplay,
+							title: 'Transactions Page'
+						}
+				);
+/*				
+				if (userDetail.customerId) {
+					res.render( 'transactions-with-saved-info', {
+							token: token,
+							cardDetailDisplay : 'style="display:none"',
+							title: 'Transactions Page'
+						}
+					);
+				}
+				else {
+					res.render( 'transactions', {
+							token: token,
+							title: 'Transactions Page'
+						} 
+					);
+				}
+*/
             } );
         }
 
@@ -88,9 +126,11 @@ exports.register = function( req, res ) {
                     expiresIn: 1440 // expires in 24 hours
                 } );
 
+				var cardDetailDisplay = "style=display:block";
                 // return the information including token as JSON
                 res.render( 'transactions', {
                     token: token,
+					cardDetailDisplay: cardDetailDisplay,
                     title: 'Transactions Page'
                 } );
             } );

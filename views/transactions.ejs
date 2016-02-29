@@ -1,19 +1,40 @@
-<h1>Transactions page</h1>
+<h2>Transactions page</h2>
 <p>Your token:<span id="token"><%=token%></span></p>
 
-<h2>Create Stripe Payments</h2>
-
-<label for="amount">Amount:</label>
-<input type="number" name="amount" id="amount"><br>
-<label for="currency">Currency: </label>
-<input type="text" name="currency" id="currency"><br>
-<label for="cardnumber">Card number </label>
-<input type="text" name="customerid" id="cardnumber" class="card-number"><br>
-<label for="cvc">CVC: </label>
-<input type="number" name="cvc" id="cvc" class="card-cvc"><br>
-<label for="card-expiry-month">Expired Month: </label>
-<input type="number" name="card-expiry-month" id="card-expiry-month" class="card-expiry-month"><br>
-<label for="card-expiry-year">Expired Year: </label>
-<input type="number" name="card-expiry-year" id="card-expiry-year" class="card-expiry-year"><br>
-<p class="payment-errors"></p>
-<input type="button" class="submittransaction" id="submittransaction" value="Submit">
+<h3>Create Stripe Payments</h3>
+<div class="form-horizontal">
+    <div class="form-group">
+        <label for="amount" class="col-sm-2 control-label">Amount:</label>
+        <div class="col-sm-4">
+            <input type="number"  class="form-control" name="amount" id="amount">
+        </div>
+        <label for="currency" class="col-sm-2 control-label">Currency: </label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control" name="currency" id="currency">
+        </div>
+    </div>
+    <div id="card-detail-div" <%=cardDetailDisplay%>>
+        <div class="form-group">
+        	<label for="cardnumber" class="col-sm-2 control-label">Card number </label>
+            <div class="col-sm-4">
+        	   <input type="text" class="form-control card-number" name="cardnumber" id="cardnumber" class="">
+            </div>
+            <label for="cvc" class="col-sm-2 control-label">CVC: </label>
+            <div class="col-sm-4">
+               <input type="number" class="form-control card-cvc" name="cvc" id="cvc">
+            </div>    
+        </div>
+        <div class="form-group">
+        	<label for="card-expiry-month" class="col-sm-2 control-label">Expired Month: </label>
+            <div class="col-sm-4">
+        	   <input type="number" class="form-control card-expiry-month" name="card-expiry-month" id="card-expiry-month">
+            </div>
+            <label for="card-expiry-year" class="col-sm-2 control-label">Expired Year: </label>
+            <div class="col-sm-4">
+               <input type="number" class="form-control card-expiry-year" name="card-expiry-year" id="card-expiry-year">
+            </div>
+        </div>
+    </div>
+    <p class="payment-errors"></p>
+    <input type="button" class="btn btn-primary btn-lg submittransaction center-block" id="submittransaction" value="Submit">
+</div>
