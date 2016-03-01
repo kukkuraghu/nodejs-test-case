@@ -33,7 +33,7 @@ exports.index = function( req, res ) {
 					console.log(err);
 					return res.status( 500 ).json( {
 						success: false,
-						message: 'Error in accessing database. Report the problem'
+						message: 'Error in authentication. Report the problem'
 					} );
                 }
 
@@ -53,37 +53,35 @@ exports.index = function( req, res ) {
 				//get the user detail to a plain object
 				var userDetail = user.toObject();
 				
-                // return the information including token as JSON
-				var cardDetailDisplay;
+                
+				var savedNewCardToggler;
+                var cardDetailDisplay;
+                var lastFour;
+
+                //if saved card information is available, userDetail will have customerId
 				if (userDetail.customerId) {
-					cardDetailDisplay = "style=display:none";
+                    //Saved card information is available
+                    savedNewCardToggler = "style=display:block"; //Gives options to use the saved card or a new card
+                    lastFour = userDetail.lastFour;//To indicate which saved card is used
+					cardDetailDisplay = "style=display:none"; //Hides the card detail input fields
+                    
 				}
 				else {
-					cardDetailDisplay = "style=display:block";
+                    //Saved card information is NOT available
+					savedNewCardToggler = "style=display:none";//The user has to input the card detail. No options required.
+                    lastFour = "";
+                    cardDetailDisplay = "style=display:block"; //Shows the card detail input fields
 				}
+
+                // return the information including token as JSON
 				res.render( 'transactions', {
 							token: token,
+                            savedNewCardToggler: savedNewCardToggler,
+                            lastFour: lastFour,
 							cardDetailDisplay: cardDetailDisplay,
 							title: 'Transactions Page'
 						}
 				);
-/*				
-				if (userDetail.customerId) {
-					res.render( 'transactions-with-saved-info', {
-							token: token,
-							cardDetailDisplay : 'style="display:none"',
-							title: 'Transactions Page'
-						}
-					);
-				}
-				else {
-					res.render( 'transactions', {
-							token: token,
-							title: 'Transactions Page'
-						} 
-					);
-				}
-*/
             } );
         }
 
@@ -98,7 +96,12 @@ exports.register = function( req, res ) {
     }, function( err, user ) {
 
         if ( err ) {
-            throw err;
+            //throw err;
+            console.log(err);
+            return res.status( 500 ).json( {
+                success: false,
+                message: 'Error in accessing database. Report the problem'
+            } );
         }
 
         if ( user ) {
@@ -122,14 +125,20 @@ exports.register = function( req, res ) {
 
                 // if user is found and password is right
                 // create a token
-                var token = jwt.sign( user, config.secret, {
+                var token = jwt.sign( user.toObject(), config.secret, {
                     expiresIn: 1440 // expires in 24 hours
                 } );
 
-				var cardDetailDisplay = "style=display:block";
+				//The user is just registered. Yet to make a payment. No card info available
+                var lastFour="";
+                var savedNewCardToggler = "style=display:none"; //No option to use the saved card.
+                var cardDetailDisplay   = "style=display:block"; //Display card detail input fields
+                
                 // return the information including token as JSON
                 res.render( 'transactions', {
                     token: token,
+                    savedNewCardToggler: savedNewCardToggler,
+                    lastFour: lastFour,
 					cardDetailDisplay: cardDetailDisplay,
                     title: 'Transactions Page'
                 } );

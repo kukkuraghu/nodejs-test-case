@@ -32,7 +32,6 @@ router.use( function( req, res, next ) {
     // decode token
     if ( token ) {
         // verifies secret and checks exp
-		debug("jwt token  : " + token);
         jwt.verify( token, config.secret, function( err, decoded ) {
             if ( err ) {
                 return res.json( {
@@ -43,7 +42,6 @@ router.use( function( req, res, next ) {
             else {
                 // if everything is good, save to request for use in other routes
                 req.decoded = decoded;
-				debug("decoded : " + decoded);
                 next();
             }
         } );

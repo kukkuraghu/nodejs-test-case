@@ -9,7 +9,8 @@ var apiError = require('../api/api-error');
 var userSchema = mongoose.Schema( {
     name: String,
     password: String,
-	customerId: String
+	customerId: String,
+    lastFour:String
 } );
 
 

@@ -1,7 +1,21 @@
 <h2>Transactions page</h2>
-<p>Your token:<span id="token"><%=token%></span></p>
+<p style=display:none>Your token:<span id="token"><%=token%></span></p>
 
 <h3>Create Stripe Payments</h3>
+<div id="saved-New-Card-Toggler-div" <%=savedNewCardToggler%>>
+    <div class="radio">
+        <label> 
+            <input type="radio" id="use-saved-pymt-id" value="option1" name="pymt-method" checked/>
+            Use card ending with <strong><%=lastFour%></strong>
+        </label>
+    </div>
+    <div class="radio">
+        <label> 
+            <input type="radio" id="use-new-pymt-id" value="option2" name="pymt-method"/>
+            Use another card
+        </label>
+    </div>
+</div>
 <div class="form-horizontal">
     <div class="form-group">
         <label for="amount" class="col-sm-2 control-label">Amount:</label>

@@ -41,18 +41,25 @@ exports.createTransaction = function( req, res, next ) {
             var chargeCustPromise = chargeCustomer(customer.id);
             chargeCustPromise.then(chargeCustSuccess, chargeCustFailure);
             User.findOneAndUpdate(  {name:req.decoded.name}, 
-                                    {customerId : customer.id},
+                                    {customerId : customer.id, lastFour : req.body.lastFour},
                                     function(error, dbCustomer) {
                                         if(error) {
                                             //Customer Id is not stored in the database.
+                                            //That means the card used for payment can not be stored.
                                             //Only logging the error. No other action.
-                                            //Either the customer has to input the card info for next payment,
-                                            //Or has to go use the previously stored card
+                                            //Either the user has to input the card info for next payment,
+                                            //Or has to use the previously stored card
                                             console.log(error);
                                             console.log("Error in updating user with customer id");
                                         }
                                         else {
-                                            console.log("User updated with customer id");
+                                            if(dbCustomer){
+                                                console.log("User updated with customer id");
+                                            }
+                                            else {
+                                                console.log("User is not updated with customer id");
+                                            }
+                                            
                                         }
                                     }
             );
@@ -95,8 +102,8 @@ exports.createTransaction = function( req, res, next ) {
     //Stripe  chargeCustomer  promise (chargeCustPromise) resolution handler.
     //Stripe has charged against the customer Id. 
     //Tries to log the transaction in the database.
-    //If successful sends the message  to customer.
-    //If logging failed, sends the message to customer. Error message is logged.
+    //If successful sends the message  to the user.
+    //If logging failed, sends the message to the user. Error message is logged.
     function chargeCustSuccess(charge){
         var transaction = new Transactions( {
                 transactionId: charge.id,
@@ -109,7 +116,7 @@ exports.createTransaction = function( req, res, next ) {
         } );
         transaction.save( function( err ) {
                 if ( err ) {
-                    console.log("Card is charged. But transcation is not logged in the database");
+                    console.log("Card is charged. But the transcation is not logged in the database");
                     console.log(charge.id + " " + charge.amount + charge.currency);
                     res.status( 200 ).json( {
                         message: 'Card is charged. But transcation is not logged in the database. Contact Helpdesk'
@@ -125,10 +132,10 @@ exports.createTransaction = function( req, res, next ) {
 
     //Stripe  chargeCustomer  promise (chargeCustPromise) rejection handler.
     //Stripe could not charge against the customer Id. 
-    //Sends the message  to customer.
+    //Sends the message  to the user.
     function chargeCustFailure(error){
         res.status( 200 ).json( {
-            message: 'Payment is failed.' + error.type
+            message: 'Payment is failed.' + error.type + " " + error.message
         } );
     }
 };
