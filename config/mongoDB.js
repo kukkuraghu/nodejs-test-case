@@ -2,5 +2,7 @@
 
 var mongoose = require( 'mongoose' );
 var config = require( './index.js' );
-
-mongoose.connect( config.mongoURI );
+process.env.server_port;
+var mongoURI = process.env.MONGOLAB_URI || config.mongoURI;
+console.log("mongo URI :" + mongoURI);
+mongoose.connect( mongoURI );
